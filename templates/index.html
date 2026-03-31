@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MailShield Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="container">
+        <h1>📩 MailShield Dashboard</h1>
+        <p class="subtitle">AI-Based Email Spam Detection System</p>
+
+        <div class="dashboard-grid">
+            <div class="card">
+                <h3>📨 Single Email Detection</h3>
+                <form method="POST" enctype="multipart/form-data">
+                    <textarea name="message" placeholder="Paste email text here...">{{ message }}</textarea>
+                    <button type="submit">Analyze Email</button>
+                </form>
+
+                {% if prediction %}
+                    <div class="result {% if prediction == 'SPAM EMAIL' %}spam{% else %}ham{% endif %}">
+                        <h2>{{ prediction }}</h2>
+                        <p>Confidence: {{ confidence }}%</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="card">
+                <h3>📂 Bulk Email Detection</h3>
+                <form method="POST" enctype="multipart/form-data">
+                    <input type="file" name="file" accept=".csv">
+                    <button type="submit">Upload CSV</button>
+                </form>
+
+                {% if bulk_results %}
+                    <div class="bulk-table">
+                        <table>
+                            <tr>
+                                <th>Email Text</th>
+                                <th>Prediction</th>
+                            </tr>
+                            {% for row in bulk_results %}
+                            <tr>
+                                <td>{{ row.text }}</td>
+                                <td>{{ row.Prediction }}</td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="chart-section">
+            <h3>📊 Model Performance</h3>
+            <img src="{{ url_for('static', filename='accuracy_chart.png') }}" alt="Accuracy Chart">
+        </div>
+    </div>
+
+</body>
+</html>

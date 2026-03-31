@@ -1,0 +1,126 @@
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: white;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 90%;
+    max-width: 1300px;
+    margin: 40px auto;
+}
+
+h1 {
+    text-align: center;
+    font-size: 40px;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #cbd5e1;
+    margin-bottom: 30px;
+    font-size: 18px;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+
+.card {
+    background: rgba(255,255,255,0.08);
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+textarea {
+    width: 100%;
+    height: 180px;
+    border: none;
+    border-radius: 12px;
+    padding: 15px;
+    font-size: 16px;
+    resize: none;
+    outline: none;
+    margin-bottom: 20px;
+}
+
+input[type="file"] {
+    margin-bottom: 15px;
+    color: white;
+}
+
+button {
+    background: #22c55e;
+    color: white;
+    border: none;
+    padding: 12px 22px;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+button:hover {
+    background: #16a34a;
+}
+
+.result {
+    margin-top: 20px;
+    padding: 18px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.spam {
+    background: rgba(239, 68, 68, 0.2);
+    border: 2px solid #ef4444;
+}
+
+.ham {
+    background: rgba(34, 197, 94, 0.2);
+    border: 2px solid #22c55e;
+}
+
+.bulk-table {
+    margin-top: 20px;
+    max-height: 350px;
+    overflow-y: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th, td {
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 10px;
+    text-align: left;
+    font-size: 14px;
+}
+
+th {
+    background: rgba(255,255,255,0.1);
+}
+
+.chart-section {
+    margin-top: 35px;
+    background: rgba(255,255,255,0.08);
+    padding: 25px;
+    border-radius: 18px;
+    text-align: center;
+}
+
+.chart-section img {
+    width: 100%;
+    max-width: 700px;
+    border-radius: 12px;
+    margin-top: 15px;
+}
