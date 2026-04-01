@@ -8,57 +8,183 @@
 </head>
 <body>
 
-    <div class="container">
-        <h1>📩 MailShield Dashboard</h1>
-        <p class="subtitle">AI-Based Email Spam Detection System</p>
+<div class="app-container">
 
-        <div class="dashboard-grid">
-            <div class="card">
-                <h3>📨 Single Email Detection</h3>
-                <form method="POST" enctype="multipart/form-data">
-                    <textarea name="message" placeholder="Paste email text here...">{{ message }}</textarea>
-                    <button type="submit">Analyze Email</button>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">MailShield</div>
+        <nav>
+            <a href="#" class="active">Dashboard</a>
+            <a href="#">Email Scan</a>
+            <a href="#">Batch Upload</a>
+            <a href="#">Logs</a>
+        </nav>
+    </aside>
+
+    <!-- Main -->
+    <main class="main-content">
+
+        <!-- Header -->
+        <div class="top-bar">
+            <div>
+                <h1>Spam Detection Dashboard</h1>
+                <p class="subtitle">Email Threat Monitoring & Classification</p>
+            </div>
+            <div class="clock-box">
+                <p id="live-clock"></p>
+                <span class="system-status">SYSTEM ACTIVE</span>
+            </div>
+        </div>
+
+        <!-- Status Cards -->
+        <div class="status-cards">
+            <div class="status-card">
+                <h4>Threat Score</h4>
+                <p>{{ spam_score if spam_score else "0.00" }}/10</p>
+            </div>
+            <div class="status-card">
+                <h4>Status</h4>
+                <p>{{ prediction if prediction else "Idle" }}</p>
+            </div>
+            <div class="status-card">
+                <h4>Risk Level</h4>
+                <p>{{ risk_level if risk_level else "Low" }}</p>
+            </div>
+            <div class="status-card">
+                <h4>Indicators</h4>
+                <p>{{ suspicious_words|length if suspicious_words else 0 }}</p>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+
+            <!-- Email Analysis -->
+            <section class="card email-card">
+                <h3>Email Analysis</h3>
+
+                <form method="POST" class="email-form">
+                    <textarea name="message" placeholder="Paste email content here...">{{ message }}</textarea>
+
+                    <div class="form-actions">
+                        <button type="submit" class="primary-btn">🔍 Scan Email</button>
+                    </div>
                 </form>
 
                 {% if prediction %}
-                    <div class="result {% if prediction == 'SPAM EMAIL' %}spam{% else %}ham{% endif %}">
+                <div class="result {{ 'spam' if prediction == 'SPAM EMAIL' else 'ham' }}">
+                    <div class="result-head">
                         <h2>{{ prediction }}</h2>
-                        <p>Confidence: {{ confidence }}%</p>
+                        <span>{{ confidence }}%</span>
                     </div>
-                {% endif %}
-            </div>
 
-            <div class="card">
-                <h3>📂 Bulk Email Detection</h3>
+                    <div class="score-box">
+                        <div class="score-labels">
+                            <span>Threat Score</span>
+                            <span>{{ spam_score }}/10</span>
+                        </div>
+                        <div class="score-bar">
+                            <div class="score-fill" style="width: {{ spam_score * 10 }}%;"></div>
+                        </div>
+                    </div>
+
+                    {% if suspicious_words %}
+                    <div class="keywords-list">
+                        {% for word in suspicious_words[:6] %}
+                        <span class="keyword-tag">{{ word }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </section>
+
+            <!-- Batch Processing -->
+            <section class="card">
+                <h3>Batch Processing</h3>
                 <form method="POST" enctype="multipart/form-data">
                     <input type="file" name="file" accept=".csv">
                     <button type="submit">Upload CSV</button>
                 </form>
 
                 {% if bulk_results %}
-                    <div class="bulk-table">
-                        <table>
-                            <tr>
-                                <th>Email Text</th>
-                                <th>Prediction</th>
-                            </tr>
-                            {% for row in bulk_results %}
-                            <tr>
-                                <td>{{ row.text }}</td>
-                                <td>{{ row.Prediction }}</td>
-                            </tr>
-                            {% endfor %}
-                        </table>
-                    </div>
+                <div class="table-wrap compact-table" style="margin-top: 12px;">
+                    <table>
+                        <tr>
+                            <th>Email</th>
+                            <th>Result</th>
+                        </tr>
+                        {% for row in bulk_results[:5] %}
+                        <tr>
+                            <td>{{ row.text[:70] }}...</td>
+                            <td>{{ row.Prediction }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+                {% else %}
+                <div class="placeholder-box" style="margin-top: 12px;">
+                    <p>Upload a CSV file with a <strong>text</strong> column to run bulk spam detection.</p>
+                </div>
                 {% endif %}
-            </div>
-        </div>
+            </section>
 
-        <div class="chart-section">
-            <h3>📊 Model Performance</h3>
-            <img src="{{ url_for('static', filename='accuracy_chart.png') }}" alt="Accuracy Chart">
+            <!-- Activity Log -->
+            <section class="card">
+                <h3>Activity Log</h3>
+                <div class="log-box">
+                    <p>[SYSTEM] MailShield initialized</p>
+                    <p>[INFO] Model loaded successfully</p>
+                    {% if prediction %}
+                        <p>[SCAN] Email analyzed successfully</p>
+                        <p>[RESULT] {{ prediction }}</p>
+                        <p>[RISK] Score: {{ spam_score }}/10 | {{ risk_level }}</p>
+                    {% else %}
+                        <p>[WAITING] No email scanned yet</p>
+                    {% endif %}
+                </div>
+            </section>
+
+            <!-- Recent Scan History -->
+            <section class="card">
+                <h3>Recent Scan History</h3>
+
+                {% if history %}
+                <div class="table-wrap compact-table">
+                    <table>
+                        <tr>
+                            <th>Time</th>
+                            <th>Result</th>
+                            <th>Score</th>
+                        </tr>
+                        {% for row in history[:5] %}
+                        <tr>
+                            <td>{{ row.timestamp[11:] }}</td>
+                            <td>{{ row.prediction }}</td>
+                            <td>{{ row.spam_score }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+                {% else %}
+                <div class="placeholder-box">
+                    <p>No scan history available yet.</p>
+                </div>
+                {% endif %}
+            </section>
+
         </div>
-    </div>
+    </main>
+</div>
+
+<script>
+function updateClock() {
+    const now = new Date();
+    document.getElementById("live-clock").innerHTML = now.toLocaleTimeString();
+}
+setInterval(updateClock, 1000);
+updateClock();
+</script>
 
 </body>
 </html>
